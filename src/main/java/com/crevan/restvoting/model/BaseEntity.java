@@ -30,7 +30,7 @@ public abstract class BaseEntity implements Persistable<Integer> {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass().equals(ProxyUtils.getUserClass(o))) {
+        if (o == null || !getClass().equals(ProxyUtils.getUserClass(o))) {
             return false;
         }
 
