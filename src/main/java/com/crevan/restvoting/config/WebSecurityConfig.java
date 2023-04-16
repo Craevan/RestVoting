@@ -1,0 +1,53 @@
+package com.crevan.restvoting.config;
+
+import com.crevan.restvoting.AuthUser;
+import com.crevan.restvoting.model.Role;
+import com.crevan.restvoting.model.User;
+import com.crevan.restvoting.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Optional;
+
+@Configuration
+@Slf4j
+@EnableWebSecurity
+@AllArgsConstructor
+public class WebSecurityConfig {
+
+    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final UserRepository userRepository;
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return email -> {
+            log.debug("Authenticating {}", email);
+            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
+            return new AuthUser(optionalUser.orElseThrow(
+                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
+        };
+    }
+
+    public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .requestMatchers("/api/account").hasRole(Role.USER.name())
+                .requestMatchers("/api/**").hasRole(Role.ADMIN.name())
+                .and()
+                .httpBasic()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf().disable();
+        return http.build();
+    }
+}
