@@ -38,6 +38,7 @@ public class WebSecurityConfig {
         };
     }
 
+    @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .requestMatchers("/api/account").hasRole(Role.USER.name())
