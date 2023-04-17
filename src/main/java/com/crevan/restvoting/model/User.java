@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
@@ -46,4 +47,8 @@ public class User extends BaseEntity {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "users_roles_unique")})
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    public void setEmail(final String email) {
+        this.email = StringUtils.hasLength(email) ? email.toLowerCase() : null;
+    }
 }
