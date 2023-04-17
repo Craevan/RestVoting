@@ -24,4 +24,16 @@ spring:
   data:
     rest:
       base-path: /api
+      defaultPageSize: 20
       return-body-on-create: true
+
+logging:
+  level:
+    root: WARN
+    com.crevan.restvoting: DEBUG
+
+server.servlet:
+  encoding:
+    charset: UTF-8
+    enabled: true
+    force: true
