@@ -9,4 +9,12 @@ public class ValidationUtil {
             throw new IllegalArgumentException(entity + " must be new (id=null)");
         }
     }
+
+    public static void assureIdConsistent(final BaseEntity entity, final int id) {
+        if (entity.isNew()) {
+            entity.setId(id);
+        } else if (entity.id() != id) {
+            throw new IllegalArgumentException(entity + " must has id=" + id);
+        }
+    }
 }
