@@ -1,4 +1,4 @@
-package com.crevan.restvoting.errors;
+package com.crevan.restvoting.error;
 
 import lombok.Getter;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
