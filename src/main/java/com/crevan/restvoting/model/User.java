@@ -1,10 +1,14 @@
 package com.crevan.restvoting.model;
 
+import com.crevan.restvoting.util.JsonDeserializers;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
@@ -33,6 +37,8 @@ public class User extends BaseEntity {
 
     @Column(name = "password")
     @Size(max = 256)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonDeserialize(using = JsonDeserializers.PasswordDeserializer.class)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -41,4 +47,8 @@ public class User extends BaseEntity {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "users_roles_unique")})
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    public void setEmail(final String email) {
+        this.email = StringUtils.hasLength(email) ? email.toLowerCase() : null;
+    }
 }
