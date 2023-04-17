@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
+import org.springframework.util.Assert;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
@@ -18,6 +19,11 @@ public abstract class BaseEntity implements Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
+
+    public int id() {
+        Assert.notNull(id, "Entity must have id");
+        return id;
+    }
 
     @Override
     @JsonIgnore
