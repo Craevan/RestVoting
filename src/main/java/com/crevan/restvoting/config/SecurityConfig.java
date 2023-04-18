@@ -23,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @EnableWebSecurity
 @AllArgsConstructor
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRepository userRepository;
@@ -41,15 +41,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
+                .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .requestMatchers("/api/account/register").anonymous()
-                .requestMatchers("/api/account").hasRole(Role.USER.name())
-                .requestMatchers("/api/**").hasRole(Role.ADMIN.name())
-                .and()
-                .httpBasic()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .csrf().disable();
+                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/v3/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .and().httpBasic()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().csrf().disable();
         return http.build();
     }
 }
