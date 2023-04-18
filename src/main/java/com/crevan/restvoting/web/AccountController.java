@@ -5,6 +5,7 @@ import com.crevan.restvoting.model.Role;
 import com.crevan.restvoting.model.User;
 import com.crevan.restvoting.repository.UserRepository;
 import com.crevan.restvoting.util.ValidationUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/account")
+@Tag(name = "Account Controller")
 public class AccountController implements RepresentationModelProcessor<RepositoryLinksResource> {
 
     @SuppressWarnings("unchecked")
