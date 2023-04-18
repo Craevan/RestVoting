@@ -1,6 +1,6 @@
 package com.crevan.restvoting.util;
 
-import com.crevan.restvoting.config.WebSecurityConfig;
+import com.crevan.restvoting.config.SecurityConfig;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -17,7 +17,7 @@ public class JsonDeserializers {
             ObjectCodec oc = jsonParser.getCodec();
             JsonNode node = oc.readTree(jsonParser);
             String rawPassword = node.asText();
-            return WebSecurityConfig.PASSWORD_ENCODER.encode(rawPassword);
+            return SecurityConfig.PASSWORD_ENCODER.encode(rawPassword);
         }
     }
 }
