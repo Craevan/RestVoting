@@ -2,7 +2,9 @@ package com.crevan.restvoting.util;
 
 import com.crevan.restvoting.error.IllegalRequestDataException;
 import com.crevan.restvoting.model.BaseEntity;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ValidationUtil {
 
     public static void checkNew(final BaseEntity entity) {
