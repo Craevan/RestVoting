@@ -4,6 +4,9 @@ import com.crevan.restvoting.AuthUser;
 import com.crevan.restvoting.model.Role;
 import com.crevan.restvoting.model.User;
 import com.crevan.restvoting.repository.UserRepository;
+import com.crevan.restvoting.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +30,12 @@ public class SecurityConfig {
 
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
+
+    @PostConstruct
+    void setMapper() {
+        JsonUtil.setObjectMapper(objectMapper);
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
