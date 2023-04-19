@@ -1,10 +1,14 @@
 package com.crevan.restvoting.web;
 
+import com.crevan.restvoting.UserTestUtil;
+import com.crevan.restvoting.model.User;
 import com.crevan.restvoting.repository.UserRepository;
+import com.crevan.restvoting.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -67,5 +71,25 @@ class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         Assertions.assertFalse(userRepository.findById(USER_ID).isPresent());
         Assertions.assertTrue(userRepository.findById(ADMIN_ID).isPresent());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void create() throws Exception {
+        User newUser = UserTestUtil.getNew();
+        perform(MockMvcRequestBuilders.post(USERS_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newUser)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void update() throws Exception {
+        User updated = UserTestUtil.getUpdated();
+        perform(MockMvcRequestBuilders.put(USERS_URL + SLASH + updated.id())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isNoContent());
     }
 }

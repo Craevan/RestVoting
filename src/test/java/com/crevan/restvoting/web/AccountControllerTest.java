@@ -1,17 +1,20 @@
 package com.crevan.restvoting.web;
 
+import com.crevan.restvoting.UserTestUtil;
+import com.crevan.restvoting.model.User;
 import com.crevan.restvoting.repository.UserRepository;
+import com.crevan.restvoting.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-
+import static com.crevan.restvoting.UrlTestUtils.REGISTER_URL;
 import static com.crevan.restvoting.UrlTestUtils.ACCOUNT_URL;
 import static com.crevan.restvoting.UserTestUtil.*;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,5 +47,25 @@ class AccountControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         Assertions.assertFalse(userRepository.findById(USER_ID).isPresent());
         Assertions.assertTrue(userRepository.findById(ADMIN_ID).isPresent());
+    }
+
+    @Test
+    void register() throws Exception {
+        User user = UserTestUtil.getNew();
+        perform(MockMvcRequestBuilders.post(ACCOUNT_URL + REGISTER_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void update() throws Exception {
+        User updated = UserTestUtil.getUpdated();
+        perform(MockMvcRequestBuilders.put(ACCOUNT_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }
