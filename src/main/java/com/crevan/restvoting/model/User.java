@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.util.StringUtils;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Set;
 
 @Entity
@@ -19,7 +22,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString(callSuper = true, exclude = {"password"})
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
@@ -47,6 +50,11 @@ public class User extends BaseEntity {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "users_roles_unique")})
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    public User(Integer id, String email, String firstName, String lastName, String password, Collection<Role> roles) {
+        this(email, firstName, lastName, password, EnumSet.copyOf(roles));
+        this.id = id;
+    }
 
     public void setEmail(final String email) {
         this.email = StringUtils.hasLength(email) ? email.toLowerCase() : null;
