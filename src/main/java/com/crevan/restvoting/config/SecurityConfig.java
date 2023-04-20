@@ -41,7 +41,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return email -> {
             log.debug("Authenticating {}", email);
-            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
+            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email.toLowerCase());
             return new AuthUser(optionalUser.orElseThrow(
                     () -> new UsernameNotFoundException("User '" + email + "' was not found")));
         };
