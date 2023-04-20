@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.rest.webmvc.RepositoryLinksResource;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -52,13 +54,14 @@ public class AccountController implements RepresentationModelProcessor<Repositor
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "users", key = "#authUser.username")
     public void delete(@AuthenticationPrincipal final AuthUser authUser) {
         log.info("Delete {}", authUser);
         userRepository.deleteById(authUser.id());
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> register(@Valid @RequestBody User user) {
         log.info("Register {}", user);
         ValidationUtil.checkNew(user);
@@ -70,8 +73,9 @@ public class AccountController implements RepresentationModelProcessor<Repositor
         return ResponseEntity.created(uriOfNewResource).body(user);
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CachePut(value = "users", key = "#authUser.username")
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void update(@Valid @RequestBody final User user, @AuthenticationPrincipal final AuthUser authUser) {
         log.info("Update {} to {}", authUser, user);
         User oldUser = authUser.getUser();
